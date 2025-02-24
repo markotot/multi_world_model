@@ -8,7 +8,7 @@ video/
 
 ### Ignore pretrained ckpt files
 /checkpoints/pretrained_iris/*
-
+/src/dataset/storage/*
 ### ArchLinuxPackages template
 *.tar
 *.tar.*
