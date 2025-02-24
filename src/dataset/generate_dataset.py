@@ -1,14 +1,8 @@
 import gym
-from huggingface_sb3 import load_from_hub
-
 import cv2
-import gymnasium as gym
 import numpy as np
-from stable_baselines3 import PPO
-from stable_baselines3.common.atari_wrappers import MaxAndSkipEnv
-from stable_baselines3.common.vec_env import DummyVecEnv
-from tqdm import tqdm
-
+import einops
+import torch
 
 class CustomObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, rgb_shape, greyscale_shape):
@@ -28,6 +22,10 @@ class CustomObservationWrapper(gym.ObservationWrapper):
         return {'rgb': rgb, 'greyscale': greyscale}
 
 def make_atari_env(env_id, rgb_shape, greyscale_shape):
+
+
+    from stable_baselines3.common.atari_wrappers import MaxAndSkipEnv
+
     env = gym.make(env_id)
     env = MaxAndSkipEnv(env, skip=4)
 
@@ -36,6 +34,13 @@ def make_atari_env(env_id, rgb_shape, greyscale_shape):
 # Generates dataset for BreakoutNoFrameskip-v4
 # Dataset contains: grey_obs_buffer[n+1], rgb_obs_buffer[n+1], actions_buffer[n], rewards[n], dones[n]
 def generate_dataset(num_frames, save_path):
+
+    from huggingface_sb3 import load_from_hub
+    import numpy as np
+    from tqdm import tqdm
+    from stable_baselines3 import PPO
+    from stable_baselines3.common.vec_env import DummyVecEnv
+
     # Load the model
     checkpoint = load_from_hub("ThomasSimonini/ppo-BreakoutNoFrameskip-v4", "ppo-BreakoutNoFrameskip-v4.zip")
     model = PPO.load(checkpoint)
@@ -95,10 +100,40 @@ def generate_dataset(num_frames, save_path):
 
     return grey_obs_buffer, rgb_obs_buffer, actions_buffer, rewards_buffer, dones_buffer
 
-def load_dataset(path):
+def load_dataset(path, should_split_into_episodes):
+
     grey_obs_buffer = np.load(f"{path}/grey_obs_buffer.npy")
     rgb_obs_buffer = np.load(f"{path}/rgb_obs_buffer.npy")
     actions_buffer = np.load(f"{path}/actions_buffer.npy")
     rewards = np.load(f"{path}/rewards.npy")
     dones = np.load(f"{path}/dones.npy")
-    return grey_obs_buffer, rgb_obs_buffer, actions_buffer, rewards, dones
+
+    if should_split_into_episodes:
+        return split_into_episodes((grey_obs_buffer, rgb_obs_buffer, actions_buffer, rewards, dones))
+    else:
+        return (grey_obs_buffer, rgb_obs_buffer, actions_buffer, rewards, dones)
+
+
+def split_into_episodes(dataset):
+
+    _, rgb_obs_buffer, actions_buffer, rewards, dones = dataset
+    episodes = []
+
+    # For every environment (n = 8)
+    for n in range(len(rgb_obs_buffer)):
+
+        done_idx = np.argwhere(dones[n]).flatten() # Indexes where the episode ended
+        done_idx = np.insert(done_idx, 0, -1) # Insert -1 to start with, assuming that the previous episode ended at index -1
+        for i in range(len(done_idx) - 1):
+            # Split the episodes based on start and stop idx
+            start = done_idx[i] + 1
+            stop = done_idx[i + 1] + 1
+            episode = {
+                'obs': rgb_obs_buffer[n, start:stop],
+                'actions': actions_buffer[n, start:stop],
+                'rewards': rewards[n, start:stop],
+                'dones': dones[n, start:stop]
+            }
+            episodes.append(episode)
+
+    return episodes
