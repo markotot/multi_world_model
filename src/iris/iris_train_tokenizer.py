@@ -1,5 +1,3 @@
-
-import hydra
 from hydra import initialize, compose
 from trainer import Trainer
 

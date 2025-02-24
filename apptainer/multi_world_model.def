@@ -1,0 +1,50 @@
+Bootstrap: docker
+From: nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+
+%files
+    iris iris
+%post
+
+    # base os
+    apt-get -y update
+    apt-get install -y \
+            python3.10 \
+            python3-pip \
+            gcc \
+            g++ \
+            swig \
+            git \
+            build-essential \
+            wget \
+            libglib2.0-0 \
+            libsm6 \
+            libxrender1 \
+            libxext6 \
+
+    # install miniconda
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh -b -f -p /opt/conda
+    rm Miniconda3-latest-Linux-x86_64.sh
+
+
+    # install conda components - add the packages you need here
+    . /opt/conda/etc/profile.d/conda.sh
+    conda create -n multi_world_model python=3.9
+    conda activate multi_world_model
+    pip install -r ./multi_world_model/requirements.txt
+
+%environment
+    . /opt/conda/etc/profile.d/conda.sh
+    conda activate multi_world_model
+
+%runscript
+
+    cd multi_world_model
+    if [ $JOB_TYPE = "pull_git" ]; then
+        git pull
+        git checkout $GIT_BRANCH
+        git pull
+    elif [ $JOB_TYPE = "run_experiment" ]; then
+        echo "Running experiment"
+        bash scripts/run_multi_world_model.sh $ENV_NAME $WANDB_API_KEY
+    fi

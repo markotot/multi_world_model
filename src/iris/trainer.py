@@ -1,3 +1,4 @@
+import os
 from collections import defaultdict
 from functools import partial
 from pathlib import Path
@@ -21,9 +22,8 @@ from episode import Episode
 from make_reconstructions import make_reconstructions_from_batch
 from models.actor_critic import ActorCritic
 from models.world_model import WorldModel
-from src.dataset import generate_dataset
 from utils import configure_optimizer, EpisodeDirManager, set_seed
-
+from dataset import load_dataset
 
 class Trainer:
     def __init__(self, cfg: DictConfig) -> None:
@@ -64,7 +64,7 @@ class Trainer:
             env_fn = partial(instantiate, config=cfg_env)
             return MultiProcessEnv(env_fn, num_envs, should_wait_num_envs_ratio=1.0) if num_envs > 1 else SingleProcessEnv(env_fn)
 
-        self.episodes_dataset = generate_dataset.load_dataset("./dataset/storage", should_split_into_episodes=True)
+        self.episodes_dataset = load_dataset("./dataset/storage", should_split_into_episodes=True)
 
 
         if self.cfg.training.should:
@@ -110,7 +110,7 @@ class Trainer:
             to_log = []
 
             if self.cfg.training.should:
-                if self.cfg.collection.train.use_pregenerated_dataset is False:
+                if self.cfg.collection.use_pregenerated_dataset is False:
                     if epoch <= self.cfg.collection.train.stop_after_epochs:
                         to_log += self.train_collector.collect(self.agent, epoch, **self.cfg.collection.train.config)
                 to_log += self.train_agent(epoch)
@@ -143,7 +143,7 @@ class Trainer:
             metrics_tokenizer = self.train_component(self.agent.tokenizer, self.optimizer_tokenizer, sequence_length=1, sample_from_start=True, **cfg_tokenizer)
         self.agent.tokenizer.eval()
 
-        if epoch > cfg_world_model.start_after_epochs:
+        if epoch > cfg_world_model.start_after_epochs or True:
             metrics_world_model = self.train_component(self.agent.world_model, self.optimizer_world_model, sequence_length=self.cfg.common.sequence_length, sample_from_start=True, tokenizer=self.agent.tokenizer, **cfg_world_model)
         self.agent.world_model.eval()
 

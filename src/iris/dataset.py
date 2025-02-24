@@ -8,9 +8,45 @@ import psutil
 import torch
 
 from episode import Episode
-
+import numpy as np
 Batch = Dict[str, torch.Tensor]
 
+def load_dataset(path, should_split_into_episodes):
+
+    grey_obs_buffer = np.load(f"{path}/grey_obs_buffer.npy")
+    rgb_obs_buffer = np.load(f"{path}/rgb_obs_buffer.npy")
+    actions_buffer = np.load(f"{path}/actions_buffer.npy")
+    rewards = np.load(f"{path}/rewards.npy")
+    dones = np.load(f"{path}/dones.npy")
+
+    if should_split_into_episodes:
+        return split_into_episodes((grey_obs_buffer, rgb_obs_buffer, actions_buffer, rewards, dones))
+    else:
+        return (grey_obs_buffer, rgb_obs_buffer, actions_buffer, rewards, dones)
+
+def split_into_episodes(dataset):
+
+    _, rgb_obs_buffer, actions_buffer, rewards, dones = dataset
+    episodes = []
+
+    # For every environment (n = 8)
+    for n in range(len(rgb_obs_buffer)):
+
+        done_idx = np.argwhere(dones[n]).flatten() # Indexes where the episode ended
+        done_idx = np.insert(done_idx, 0, -1) # Insert -1 to start with, assuming that the previous episode ended at index -1
+        for i in range(len(done_idx) - 1):
+            # Split the episodes based on start and stop idx
+            start = done_idx[i] + 1
+            stop = done_idx[i + 1] + 1
+            episode = {
+                'obs': rgb_obs_buffer[n, start:stop],
+                'actions': actions_buffer[n, start:stop],
+                'rewards': rewards[n, start:stop],
+                'dones': dones[n, start:stop]
+            }
+            episodes.append(episode)
+
+    return episodes
 
 class EpisodesDataset:
     def __init__(self, max_num_episodes: Optional[int] = None, name: Optional[str] = None) -> None:
