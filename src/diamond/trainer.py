@@ -17,7 +17,7 @@ from agent import Agent
 from coroutines.collector import make_collector, NumToCollect
 from data import BatchSampler, collate_segments_to_batch, Dataset, DatasetTraverser
 from envs import make_atari_env, WorldModelEnv
-from src.diamond.data import Episode
+from data import Episode
 from utils import (
     broadcast_if_needed,
     build_ddp_wrapper,
@@ -104,11 +104,12 @@ class Trainer(StateDictMixin):
         for episode in self.episodes_dataset:
             o = torch.from_numpy(episode['obs']).permute(0, 3, 1, 2).cpu()
             o = 2 * o / 255 - 1
-            a = torch.from_numpy(episode['actions']).cpu()
+            a = torch.from_numpy(episode['actions']).to(torch.int64).cpu()
             r = torch.from_numpy(episode['rewards']).cpu()
-            e = torch.from_numpy(episode['dones']).cpu()
+            e = torch.from_numpy(episode['dones']).to(torch.uint8).cpu()
             t = torch.zeros_like(e).cpu()
-            ep = Episode(o, a, r, e, t, info=None)
+            info = {"final_observation": o[-1]}
+            ep = Episode(o, a, r, e, t, info=info)
             self.train_dataset.add_episode(ep)
         # Envs
         if self._rank == 0:
@@ -227,12 +228,12 @@ class Trainer(StateDictMixin):
             if self._is_model_free or self._is_static_dataset:
                 self.num_epochs_collect = 0
             else:
-                self.num_epochs_collect = 0
-            #     if self._rank == 0:
-            #         self.num_epochs_collect, to_log_ = self.collect_initial_dataset()
-            #         to_log += to_log_
-            #     self.num_epochs_collect, sd_train_dataset = broadcast_if_needed(self.num_epochs_collect, self.train_dataset.state_dict())
-            #     self.train_dataset.load_state_dict(sd_train_dataset)
+                self.num_epochs_collect = 0 # Remove and uncomment the rest for non-pregenerated
+                # if self._rank == 0:
+                #     self.num_epochs_collect, to_log_ = self.collect_initial_dataset()
+                #     to_log += to_log_
+                # self.num_epochs_collect, sd_train_dataset = broadcast_if_needed(self.num_epochs_collect, self.train_dataset.state_dict())
+                # self.train_dataset.load_state_dict(sd_train_dataset)
 
         num_epochs = self.num_epochs_collect + self._cfg.training.num_final_epochs
 
@@ -244,7 +245,7 @@ class Trainer(StateDictMixin):
                 print(f"\nEpoch {self.epoch} / {num_epochs}\n")
 
             # Training
-            should_collect_train = (self._rank == 0 and not self._is_model_free and not self._is_static_dataset and self.epoch <= self.num_epochs_collect)
+            # should_collect_train = (self._rank == 0 and not self._is_model_free and not self._is_static_dataset and self.epoch <= self.num_epochs_collect)
 
             # if should_collect_train:
             #     c = self._cfg.collection.train

@@ -29,7 +29,7 @@ From: nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
 
     # install conda components - add the packages you need here
     . /opt/conda/etc/profile.d/conda.sh
-    conda create -n multi_world_model python=3.9
+    conda create -n multi_world_model python=3.10
     conda activate multi_world_model
     pip install -r ./multi_world_model/requirements.txt
 

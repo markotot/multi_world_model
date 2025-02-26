@@ -48,7 +48,10 @@ class RewEndModel(nn.Module):
     ) -> Tuple[Tensor, Tensor, Tuple[Tensor, Tensor]]:
         b, t, c, h, w = obs.shape
         obs, act, next_obs = obs.reshape(b * t, c, h, w), act.reshape(b * t), next_obs.reshape(b * t, c, h, w)
-        x = self.encoder(torch.cat((obs, next_obs), dim=1), self.act_emb(act))
+
+        action_embedding =  self.act_emb(act)
+        obs_pair = torch.cat((obs, next_obs), dim=1)
+        x = self.encoder(obs_pair, action_embedding)
         x = x.reshape(b, t, -1)  # (b t) e h w -> b t (e h w)
         x, hx_cx = self.lstm(x, hx_cx)
         logits = self.head(x)
