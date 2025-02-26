@@ -9,7 +9,7 @@ defaults:
 
 wandb:
   mode: disabled
-  project: null
+  project: "multi-wm"
   entity: null
   name: null
   group: null

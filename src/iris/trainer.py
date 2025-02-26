@@ -30,7 +30,7 @@ class Trainer:
         wandb.init(
             config=OmegaConf.to_container(cfg, resolve=True),
             reinit=True,
-            resume=True,
+            resume=False,
             **cfg.wandb
         )
 

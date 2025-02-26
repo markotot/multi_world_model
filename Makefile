@@ -1,5 +1,5 @@
 GIT_BRANCH = main
-PROJECT_NAME = MultiWorldModel
+PROJECT_NAME = multi_world_model
 
 #APOCRITA
 AP_PRIVATE_KEY_PATH = ~/Apocrita/apocrita.ssh
