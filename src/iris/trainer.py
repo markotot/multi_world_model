@@ -64,6 +64,7 @@ class Trainer:
             env_fn = partial(instantiate, config=cfg_env)
             return MultiProcessEnv(env_fn, num_envs, should_wait_num_envs_ratio=1.0) if num_envs > 1 else SingleProcessEnv(env_fn)
 
+        os.getcwd()
         self.episodes_dataset = load_dataset("./dataset/storage", should_split_into_episodes=True)
 
 
@@ -73,7 +74,7 @@ class Trainer:
             self.train_collector = Collector(train_env, self.train_dataset, episode_manager_train)
 
             # If using a pregenerated dataset
-            self.train_collector.add_pregenerated_experience_to_dataset(self.episodes_dataset[:5])
+            self.train_collector.add_pregenerated_experience_to_dataset(self.episodes_dataset)
 
         if self.cfg.evaluation.should:
             test_env = create_env(cfg.env.test, cfg.collection.test.num_envs)

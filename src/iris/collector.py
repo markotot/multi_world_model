@@ -20,7 +20,7 @@ class Collector:
         self.env = env
         self.dataset = dataset
         self.episode_dir_manager = episode_dir_manager
-        self.obs = self.env.reset()
+        #self.obs = self.env.reset()
         self.episode_ids = [None] * self.env.num_envs
         self.heuristic = RandomHeuristic(self.env.num_actions)
 
