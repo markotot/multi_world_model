@@ -110,7 +110,7 @@ rew_end_model:
     steps_first_epoch: 10000
     steps_per_epoch: 400
     sample_weights: ${denoiser.training.sample_weights}
-    batch_size: 32 # 32
+    batch_size: 32
     grad_acc_steps: 1
     lr_warmup_steps: 100
     max_grad_norm: 100.0
