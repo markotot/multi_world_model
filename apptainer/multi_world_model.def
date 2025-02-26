@@ -2,7 +2,7 @@ Bootstrap: docker
 From: nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
 
 %files
-    iris iris
+    multi_world_model multi_world_model
 %post
 
     # base os
