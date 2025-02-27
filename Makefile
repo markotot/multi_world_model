@@ -10,7 +10,7 @@ START_SEED = 0
 END_SEED = 1
 ENV_NAME = "Breakout" # set environment name
 FULL_ENV_NAME := $(addsuffix NoFrameskip-v4,${ENV_NAME}) # add NoFrameskip-v4 to the environment name for openai gym
-RUN_NAME = "iris_pre_generated"
+RUN_NAME = "mwm_short"
 
 
 # Used to login to apocrita server
