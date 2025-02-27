@@ -22,7 +22,7 @@ def main() -> None:
     with initialize(config_path="config"):
         cfg = compose(config_name="trainer")
 
-    setup_visible_cuda_devices(cfg.common.devices)
+    #setup_visible_cuda_devices(cfg.common.devices)
     world_size = torch.cuda.device_count()
 
 
