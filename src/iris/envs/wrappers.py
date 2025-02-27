@@ -33,13 +33,15 @@ class ResizeObsWrapper(gym.ObservationWrapper):
         self.unwrapped.original_obs = None
 
     def resize(self, obs: np.ndarray):
+        if type(obs) is tuple: # Some gym versions return (obs, info) some return only (obs)
+            obs = obs[0]
         img = Image.fromarray(obs)
         img = img.resize(self.size, Image.BILINEAR)
         return np.array(img)
 
     def observation(self, observation: np.ndarray) -> np.ndarray:
         self.unwrapped.original_obs = observation
-        return self.resize(observation[0])
+        return self.resize(observation)
 
 
 class RewardClippingWrapper(gym.RewardWrapper):

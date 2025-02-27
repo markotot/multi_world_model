@@ -104,6 +104,7 @@ class Trainer:
 
     def run(self) -> None:
 
+
         for epoch in range(self.start_epoch, 1 + self.cfg.common.epochs):
 
             print(f"\nEpoch {epoch} / {self.cfg.common.epochs}\n")
