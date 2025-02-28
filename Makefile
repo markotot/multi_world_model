@@ -42,7 +42,7 @@ apocrita_run_iris:
 
 .SILENT: apocrita_run_diamond
 apocrita_run_diamond:
-	sudo expect ./scripts/apocrita_run_iris.sh \
+	sudo expect ./scripts/apocrita_run_diamond.sh \
  	${APOCRITA_USER} ${APOCRITA_PASSPHRASE} ${APOCRITA_USER_PASSWORD} ${AP_PRIVATE_KEY_PATH} \
  	${GIT_BRANCH} ${PROJECT_NAME} ${WANDB_API_KEY} ${START_SEED} ${END_SEED} ${RUN_NAME} ${FULL_ENV_NAME}
 
