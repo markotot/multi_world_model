@@ -7,7 +7,6 @@ import sys
 import time
 from typing import Any, Dict, Optional, Tuple
 
-import hydra
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
 import torch
@@ -15,15 +14,15 @@ import torch.nn as nn
 from tqdm import tqdm
 import wandb
 
-from agent import Agent
-from collector import Collector
-from envs import SingleProcessEnv, MultiProcessEnv
-from episode import Episode
-from make_reconstructions import make_reconstructions_from_batch
-from models.actor_critic import ActorCritic
-from models.world_model import WorldModel
-from utils import configure_optimizer, EpisodeDirManager, set_seed
-from dataset import load_dataset
+from .agent import Agent
+from .collector import Collector
+from .envs import SingleProcessEnv, MultiProcessEnv
+from .episode import Episode
+from .make_reconstructions import make_reconstructions_from_batch
+from .models.actor_critic import ActorCritic
+from .models.world_model import WorldModel
+from .utils import configure_optimizer, EpisodeDirManager, set_seed
+from .dataset import load_dataset
 
 class Trainer:
     def __init__(self, cfg: DictConfig) -> None:
@@ -64,8 +63,7 @@ class Trainer:
             env_fn = partial(instantiate, config=cfg_env)
             return MultiProcessEnv(env_fn, num_envs, should_wait_num_envs_ratio=1.0) if num_envs > 1 else SingleProcessEnv(env_fn)
 
-        os.getcwd()
-        self.episodes_dataset = load_dataset("./dataset/storage", should_split_into_episodes=True)
+        self.episodes_dataset = load_dataset("./dataset/storage/breakout_test", should_split_into_episodes=True)
 
 
         if self.cfg.training.should:

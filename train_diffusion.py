@@ -9,8 +9,8 @@ import torch
 from torch.distributed import init_process_group, destroy_process_group
 import torch.multiprocessing as mp
 
-from trainer import Trainer
-from utils import skip_if_run_is_over
+from src.diamond.trainer import Trainer
+from src.diamond.utils import skip_if_run_is_over
 
 
 OmegaConf.register_new_resolver("eval", eval)
@@ -19,7 +19,7 @@ OmegaConf.register_new_resolver("eval", eval)
 #@hydra.main(config_path="../config", config_name="trainer")
 def main() -> None:
 
-    with initialize(config_path="config"):
+    with initialize(config_path="src/diamond/config"):
         cfg = compose(config_name="trainer")
 
     #setup_visible_cuda_devices(cfg.common.devices)

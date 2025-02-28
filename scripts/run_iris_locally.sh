@@ -1,2 +1,1 @@
-cd src
-python3 iris/iris_train_tokenizer.py
+python3 train_iris.py

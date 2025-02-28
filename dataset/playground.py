@@ -1,11 +1,11 @@
-from src.dataset.generate_dataset import (load_dataset, split_into_episodes)
+from dataset.generate_dataset import (load_dataset, split_into_episodes)
 # from src.dataset.generate_dataset import generate_dataset
 
 import matplotlib.pyplot as plt
 
 
 num_frames = 100_000
-path = "./storage/breakout_test/"
+path = "storage/breakout_test/"
 #greyscale_buffer, rgb_buffer, action_buffer, reward_buffer, done_buffer = generate_dataset(num_frames, path)
 
 

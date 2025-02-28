@@ -1,2 +1,1 @@
-cd src
-python3 diamond/diffusion_train.py
+python3 train_diffusion.py

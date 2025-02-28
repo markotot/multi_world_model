@@ -6,9 +6,9 @@ from torch import Tensor
 import torch.nn as nn
 import torch.nn.functional as F
 
-from data import Batch
+from src.diamond.data import Batch
 from .inner_model import InnerModel, InnerModelConfig
-from utils import LossAndLogs
+from src.diamond.utils import LossAndLogs
 
 
 def add_dims(input: Tensor, n: int) -> Tensor:

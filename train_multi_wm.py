@@ -1,6 +1,6 @@
 from hydra import initialize, compose
 
-from iris.trainer import Trainer
+from src.iris.trainer import Trainer
 
 def main():
 
