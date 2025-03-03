@@ -8,8 +8,8 @@ defaults:
 #    chdir: True
 
 wandb:
-  mode: disabled
-  project: "multi-wm"
+  mode: online
+  project: diamond
   entity: null
   name: null
   group: null
