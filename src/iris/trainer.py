@@ -50,6 +50,7 @@ class Trainer:
             config_path = config_dir / 'trainer.yaml'
             config_dir.mkdir(exist_ok=True, parents=False)
             wandb.save(str(config_path))
+            print(os.getcwd())
             self.ckpt_dir.mkdir(exist_ok=True, parents=False)
             self.media_dir.mkdir(exist_ok=True, parents=False)
             self.episode_dir.mkdir(exist_ok=True, parents=False)
