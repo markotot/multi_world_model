@@ -66,7 +66,7 @@ class Trainer(StateDictMixin):
         self._is_model_free = cfg.training.model_free
 
         # Checkpointing
-        self._path_ckpt_dir = Path("checkpoints")
+        self._path_ckpt_dir = Path("checkpoints/diamond")
         self._path_state_ckpt = self._path_ckpt_dir / "state.pt"
         self._keep_agent_copies = partial(
             keep_agent_copies_every,
@@ -240,6 +240,8 @@ class Trainer(StateDictMixin):
         while self.epoch < num_epochs:
             self.epoch += 1
             start_time = time.time()
+
+            self.save_checkpoint()
 
             if self._rank == 0:
                 print(f"\nEpoch {self.epoch} / {num_epochs}\n")
@@ -428,6 +430,6 @@ class Trainer(StateDictMixin):
         if self._rank == 0:
             save_with_backup(self.state_dict(), self._path_state_ckpt)
             #self.train_dataset.save_to_default_path()
-            self.test_dataset.save_to_default_path()
+            #self.test_dataset.save_to_default_path()
             self._keep_agent_copies(self.agent.state_dict(), self.epoch)
             self._save_info_for_import_script(self.epoch)

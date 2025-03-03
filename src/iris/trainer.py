@@ -40,8 +40,8 @@ class Trainer:
         self.start_epoch = 1
         self.device = torch.device(cfg.common.device)
 
-        self.ckpt_dir = Path('checkpoints')
-        self.media_dir = Path('media')
+        self.ckpt_dir = Path('checkpoints/iris')
+        self.media_dir = Path('media/iris')
         self.episode_dir = self.media_dir / 'episodes'
         self.reconstructions_dir = self.media_dir / 'reconstructions'
 
@@ -104,6 +104,9 @@ class Trainer:
 
 
         for epoch in range(self.start_epoch, 1 + self.cfg.common.epochs):
+
+            if self.cfg.training.should:
+                self.save_checkpoint(epoch, save_agent_only=not self.cfg.common.do_checkpoint)
 
             print(f"\nEpoch {epoch} / {self.cfg.common.epochs}\n")
             start_time = time.time()

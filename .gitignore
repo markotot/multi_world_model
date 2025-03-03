@@ -5,6 +5,7 @@
 wandb/
 /zoo/atari/entry/video/
 video/
+checkpoints/
 
 ### Ignore pretrained ckpt files
 /checkpoints/pretrained_iris/*
