@@ -66,7 +66,7 @@ class WorldModelEnv:
         self.act_buffer[:, -1] = act
 
         next_obs, denoising_trajectory = self.predict_next_obs()
-        print(next_obs.mean(), next_obs.std(), next_obs.min(), next_obs.max())
+        #print(next_obs.mean(), next_obs.std(), next_obs.min(), next_obs.max())
         rew, end = self.predict_rew_end(next_obs.unsqueeze(1))
 
         self.ep_len += 1

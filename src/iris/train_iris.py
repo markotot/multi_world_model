@@ -1,13 +1,9 @@
 from hydra import initialize, compose
-from iris.trainer import Trainer
-
-import sys; print("Exec:\t\t" + sys.executable)
-import os; print("CWD:\t\t" + os.getcwd())
-print("SYS_PATH:\t\t" + str(sys.path))
+from src.iris.trainer import Trainer
 
 def main():
 
-    with initialize(config_path="iris/config"):
+    with initialize(config_path="src/iris/config"):
         cfg = compose(config_name="trainer")
 
         if cfg.env.train.id is None:
