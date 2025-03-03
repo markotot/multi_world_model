@@ -10,7 +10,6 @@ def main():
             cfg.env.train.id = "BreakoutNoFrameskip-v4"
         cfg.common.device = "cuda:0"
         cfg.wandb.mode = "online"
-    print("tse")
     trainer = Trainer(cfg)
     trainer.run()
 
