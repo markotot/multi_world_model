@@ -36,6 +36,8 @@ class ImagineOutput:
 class ActorCritic(nn.Module):
     def __init__(self, act_vocab_size, use_original_obs: bool = False) -> None:
         super().__init__()
+
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.use_original_obs = use_original_obs
         self.conv1 = nn.Conv2d(3, 32, 3, stride=1, padding=1)
         self.maxp1 = nn.MaxPool2d(2, 2)
@@ -60,9 +62,9 @@ class ActorCritic(nn.Module):
         self.hx, self.cx = None, None
 
     def reset(self, n: int, burnin_observations: Optional[torch.Tensor] = None, mask_padding: Optional[torch.Tensor] = None) -> None:
-        device = self.conv1.weight.device
-        self.hx = torch.zeros(n, self.lstm_dim, device=device)
-        self.cx = torch.zeros(n, self.lstm_dim, device=device)
+
+        self.hx = torch.zeros(n, self.lstm_dim, device=self.device)
+        self.cx = torch.zeros(n, self.lstm_dim, device=self.device)
         if burnin_observations is not None:
             assert burnin_observations.ndim == 5 and burnin_observations.size(0) == n and mask_padding is not None and burnin_observations.shape[:2] == mask_padding.shape
             for i in range(burnin_observations.size(1)):

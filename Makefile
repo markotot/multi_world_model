@@ -67,6 +67,13 @@ apocrita_qstat:
 local_run:
 	sudo bash ./scripts/run_iris_local.sh ${NUM_SEEDS} ${FULL_ENV_NAME} ${WANDB_API_KEY}
 
+.SILENT: download_checkpoint
+download_checkpoint:
+	sudo bash ./scripts/download_checkpoints.sh \
+ 	${APOCRITA_USER} ${APOCRITA_PASSPHRASE} ${APOCRITA_USER_PASSWORD} ${AP_PRIVATE_KEY_PATH} \
+ 	${PROJECT_NAME}
+
+
 .SILENT: test
 test:
 	echo FULL_ENV_NAME: ${FULL_ENV_NAME}
